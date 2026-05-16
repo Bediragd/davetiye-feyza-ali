@@ -85,56 +85,64 @@ envelope.setAttribute('tabindex', '0');
 envelope.setAttribute('role', 'button');
 envelope.setAttribute('aria-label', 'Zarfı aç');
 
-/* ----- 4) Müzik — sade ve garanti çalan yaklaşım ----- */
+/* ----- 4) Müzik — sade, garanti, 13. saniyeden başlar ----- */
 const music = document.getElementById('bgMusic');
-const MUSIC_START_AT = 13; // saniye
+const MUSIC_START_AT = 13; // şarkının kendi içindeki başlama noktası (saniye)
 let musicStarted = false;
+let seekDone = false;
 
-function seekToStart() {
-    if (!music) return;
+// 13. saniyeye seek dener; uygun değilse hazır olunca tekrar dener
+function trySeek() {
+    if (!music || seekDone) return false;
     try {
-        if (isFinite(music.duration) && music.duration > MUSIC_START_AT) {
+        const dur = music.duration;
+        if (isFinite(dur) && dur > MUSIC_START_AT &&
+            music.seekable && music.seekable.length > 0 &&
+            music.seekable.end(0) >= MUSIC_START_AT) {
             music.currentTime = MUSIC_START_AT;
-        } else if (music.seekable && music.seekable.length > 0 &&
-                   music.seekable.end(0) > MUSIC_START_AT) {
-            music.currentTime = MUSIC_START_AT;
+            seekDone = true;
+            return true;
         }
     } catch (_) { /* ignore */ }
+    return false;
 }
 
-// O ana kadar yeterli buffer yüklenmediyse, yüklenince tekrar dene
-function ensureSeekWhenReady() {
+// Audio meta verisi/buffer geldikçe seek'i tekrar dene
+function bindSeekRetry() {
     if (!music) return;
-    const onCanPlay = () => {
-        try {
-            if (music.currentTime < MUSIC_START_AT - 0.5 &&
-                music.duration > MUSIC_START_AT) {
-                music.currentTime = MUSIC_START_AT;
-            }
-        } catch (_) {}
+    const handler = () => {
+        if (trySeek()) {
+            ['loadedmetadata','loadeddata','canplay','canplaythrough','progress'].forEach(ev =>
+                music.removeEventListener(ev, handler)
+            );
+        }
     };
-    music.addEventListener('loadedmetadata', onCanPlay);
-    music.addEventListener('canplay', onCanPlay);
-    music.addEventListener('canplaythrough', onCanPlay);
+    ['loadedmetadata','loadeddata','canplay','canplaythrough','progress'].forEach(ev =>
+        music.addEventListener(ev, handler)
+    );
 }
 
-// İlk: sessiz çalmaya başlamayı dene (tarayıcı izin verir)
+// 1) Sessiz autoplay: tarayıcı izin verir, müzik sessizce 13. sn'den başlar
 function trySilentAutoplay() {
     if (!music) return;
     music.muted = true;
     music.volume = 0;
-    seekToStart();
+    trySeek();
     const p = music.play();
     if (p && typeof p.catch === 'function') p.catch(() => {});
 }
 
-// Kullanıcı dokunduğunda: sesi aç ve play çağrısını gesture içinde yap
+// 2) İlk kullanıcı etkileşiminde: sesi aç, gerekirse yeniden seek + play
 function startMusicWithSound() {
     if (musicStarted || !music) return;
     musicStarted = true;
     music.muted = false;
     music.volume = 0.75;
-    seekToStart();
+    trySeek();
+    // Eğer seek hâlâ olmadıysa metadata gelir gelmez tekrar dene
+    if (!seekDone) {
+        music.addEventListener('loadedmetadata', () => trySeek(), { once: true });
+    }
     const p = music.play();
     if (p && typeof p.catch === 'function') {
         p.catch(() => { musicStarted = false; });
@@ -143,7 +151,8 @@ function startMusicWithSound() {
 
 function initMusic() {
     if (!music) return;
-    ensureSeekWhenReady();
+    music.load(); // buffer'ı hemen başlat
+    bindSeekRetry();
     trySilentAutoplay();
     const events = ['pointerdown', 'touchstart', 'click', 'keydown', 'scroll'];
     events.forEach(ev => {
