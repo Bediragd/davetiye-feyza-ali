@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#f4e4d4">
+    <title>Feyza & Ali — Nişan Davetiyesi</title>
+    <meta name="description" content="Feyza Ağdemir & Ali Ağdemir nişan törenine davetlisiniz.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Feyza & Ali — Nişan Davetiyesi">
+    <meta property="og:description" content="Sevgiyle başlayan yolculuğumuzun ilk adımı için sizi de aramızda görmek isteriz.">
+    <meta property="og:type" content="website">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Great+Vibes&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Background music -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="assets/music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music toggle button (üst) -->
+    <button id="musicToggle" class="music-toggle" aria-label="Müziği aç/kapat">
+        <span class="music-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+        </span>
+        <span class="music-text">Müziği aç</span>
+    </button>
+
+    <!-- Üst dekoratif şerit -->
+    <div class="top-chandeliers" aria-hidden="true">
+        <div class="chandelier left">
+            <svg viewBox="0 0 80 100" width="60" height="80">
+                <defs>
+                    <radialGradient id="cg1" cx="50%" cy="40%" r="50%">
+                        <stop offset="0%" stop-color="#fff7d6"/>
+                        <stop offset="60%" stop-color="#e9c97a"/>
+                        <stop offset="100%" stop-color="#a8842f"/>
+                    </radialGradient>
+                </defs>
+                <line x1="40" y1="0" x2="40" y2="20" stroke="#c9a961" stroke-width="1"/>
+                <ellipse cx="40" cy="28" rx="22" ry="10" fill="url(#cg1)" opacity="0.85"/>
+                <ellipse cx="40" cy="46" rx="32" ry="6" fill="url(#cg1)" opacity="0.7"/>
+                <circle cx="20" cy="50" r="4" fill="#fff5c2"/>
+                <circle cx="40" cy="54" r="4" fill="#fff5c2"/>
+                <circle cx="60" cy="50" r="4" fill="#fff5c2"/>
+                <circle cx="30" cy="64" r="3" fill="#fff5c2"/>
+                <circle cx="50" cy="64" r="3" fill="#fff5c2"/>
+                <circle cx="40" cy="74" r="3" fill="#fff5c2"/>
+            </svg>
+        </div>
+        <div class="chandelier right">
+            <svg viewBox="0 0 80 100" width="60" height="80">
+                <use href="#" />
+                <line x1="40" y1="0" x2="40" y2="20" stroke="#c9a961" stroke-width="1"/>
+                <ellipse cx="40" cy="28" rx="22" ry="10" fill="url(#cg1)" opacity="0.85"/>
+                <ellipse cx="40" cy="46" rx="32" ry="6" fill="url(#cg1)" opacity="0.7"/>
+                <circle cx="20" cy="50" r="4" fill="#fff5c2"/>
+                <circle cx="40" cy="54" r="4" fill="#fff5c2"/>
+                <circle cx="60" cy="50" r="4" fill="#fff5c2"/>
+                <circle cx="30" cy="64" r="3" fill="#fff5c2"/>
+                <circle cx="50" cy="64" r="3" fill="#fff5c2"/>
+                <circle cx="40" cy="74" r="3" fill="#fff5c2"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Tab navigation -->
+    <nav class="page-tabs">
+        <button class="tab-btn active" data-page="1">Sayfa 1</button>
+        <button class="tab-btn" data-page="2">Sayfa 2</button>
+    </nav>
+
+    <main class="pages">
+
+        <!-- ====== SAYFA 1 ====== -->
+        <section class="page page-1 active" id="page1">
+            <div class="page1-inner">
+
+                <div class="envelope-stage">
+                    <div class="envelope" id="envelope">
+                        <!-- Arka kart (içerik) -->
+                        <div class="letter">
+                            <div class="letter-content">
+                                <p class="letter-small">— davetlisiniz —</p>
+                                <h2 class="letter-names">Feyza<br><span class="amp">&amp;</span><br>Ali</h2>
+                                <p class="letter-small">nişanlanıyoruz</p>
+                            </div>
+                        </div>
+
+                        <!-- Zarf gövdesi -->
+                        <div class="envelope-back"></div>
+                        <div class="envelope-front-left"></div>
+                        <div class="envelope-front-right"></div>
+                        <div class="envelope-front-bottom"></div>
+
+                        <!-- Üst kapak (açılan) -->
+                        <div class="envelope-flap">
+                            <div class="monogram">
+                                <span class="initial">F</span>
+                                <span class="amp-small">&amp;</span>
+                                <span class="initial">A</span>
+                            </div>
+                        </div>
+
+                        <!-- Mühür -->
+                        <div class="wax-seal" id="waxSeal">
+                            <span>F<small>&amp;</small>A</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="hint" id="envelopeHint">Zarfa tıkla</p>
+
+                <h1 class="hero-script">Feyza</h1>
+            </div>
+        </section>
+
+        <!-- ====== SAYFA 2 ====== -->
+        <section class="page page-2" id="page2">
+            <div class="page2-inner">
+
+                <!-- Üst: Davet kartı -->
+                <article class="card invite-card">
+                    <div class="ornament top" aria-hidden="true"></div>
+                    <h2 class="couple-names">Feyza <span class="amp-script">&amp;</span> Ali</h2>
+                    <p class="event-date">31.05.2026</p>
+                    <p class="event-time">19.00</p>
+
+                    <div class="divider"><span>♥</span></div>
+
+                    <p class="invite-text quote">
+                        “Ve Allah onların kalplerini birbirine ısındırdı…”
+                    </p>
+                    <p class="ayet-ref">Enfal Suresi 63. Ayet</p>
+
+                    <div class="mini-divider" aria-hidden="true"></div>
+
+                    <p class="invite-text">
+                        Sevgiyle başlayan hikâyemizin en güzel adımında,
+                        ailelerimizin kıymetli huzurunda
+                        nişan törenimize teşriflerinizden onur duyarız.
+                    </p>
+                    <div class="ornament bottom" aria-hidden="true"></div>
+                </article>
+
+                <!-- Geri sayım + RSVP -->
+                <article class="card countdown-card">
+                    <h3 class="section-title">Nişanımıza Son</h3>
+                    <div class="countdown" id="countdown" aria-live="polite">
+                        <div class="cd-item"><span class="cd-num" id="cdDays">000</span><small>Gün</small></div>
+                        <span class="cd-sep">:</span>
+                        <div class="cd-item"><span class="cd-num" id="cdHours">00</span><small>Saat</small></div>
+                        <span class="cd-sep">:</span>
+                        <div class="cd-item"><span class="cd-num" id="cdMins">00</span><small>Dakika</small></div>
+                        <span class="cd-sep">:</span>
+                        <div class="cd-item"><span class="cd-num" id="cdSecs">00</span><small>Saniye</small></div>
+                    </div>
+
+                    <h3 class="section-title rsvp-title">RSVP</h3>
+                    <p class="rsvp-sub">Katılım durumunuzu bizimle paylaşır mısınız?</p>
+                    <div class="rsvp-buttons">
+                        <button class="rsvp-btn yes" data-answer="yes">Katılıyorum</button>
+                        <button class="rsvp-btn no" data-answer="no">Katılamıyorum</button>
+                    </div>
+                </article>
+
+                <!-- Tören Yeri -->
+                <article class="card venue-card">
+                    <h3 class="section-title">Tören Yeri</h3>
+                    <div class="venue-illustration" aria-hidden="true">
+                        <svg viewBox="0 0 200 120" width="160" height="100">
+                            <rect x="60" y="50" width="80" height="60" fill="#e9d8b4" stroke="#b08a4a" stroke-width="1.5"/>
+                            <polygon points="50,50 100,15 150,50" fill="#c9a961" stroke="#8a6a2c" stroke-width="1.5"/>
+                            <rect x="92" y="75" width="16" height="35" fill="#8a6a2c"/>
+                            <rect x="70" y="62" width="12" height="14" fill="#fff7d6" stroke="#8a6a2c"/>
+                            <rect x="118" y="62" width="12" height="14" fill="#fff7d6" stroke="#8a6a2c"/>
+                            <line x1="100" y1="15" x2="100" y2="5" stroke="#8a6a2c"/>
+                            <circle cx="100" cy="4" r="2" fill="#c9a961"/>
+                            <!-- yan ağaçlar -->
+                            <circle cx="35" cy="95" r="12" fill="#7a9b6b" opacity="0.7"/>
+                            <rect x="33" y="100" width="4" height="14" fill="#5d4a2e"/>
+                            <circle cx="165" cy="95" r="12" fill="#7a9b6b" opacity="0.7"/>
+                            <rect x="163" y="100" width="4" height="14" fill="#5d4a2e"/>
+                        </svg>
+                    </div>
+                    <p class="venue-name">Diva Davet Evi</p>
+                    <p class="venue-address">Mehmetçik Mah. 7053. Sok. 2/1, 63000 Karaköprü / Şanlıurfa</p>
+
+                    <div class="map-wrap">
+                        <iframe
+                            id="venueMap"
+                            src="https://www.google.com/maps?q=Diva+Davet+Evi%2C+Karak%C3%B6pr%C3%BC%2C+%C5%9Eanl%C4%B1urfa&output=embed"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Tören yeri haritası">
+                        </iframe>
+                    </div>
+
+                    <a class="map-link" id="mapLink" href="https://www.google.com/maps?q=Diva+Davet+Evi%2C+Karak%C3%B6pr%C3%BC%2C+%C5%9Eanl%C4%B1urfa" target="_blank" rel="noopener">
+                        Konumu haritalarda görün
+                    </a>
+                </article>
+
+                <footer class="footer-credit">
+                    <span>Feyza &amp; Ali · 31.05.2026</span>
+                </footer>
+            </div>
+        </section>
+    </main>
+
+    <!-- RSVP modal -->
+    <div class="modal-backdrop" id="rsvpModal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal">
+            <button class="modal-close" id="modalClose" aria-label="Kapat">×</button>
+            <h3 id="rsvpModalTitle">Katılım Bilgisi</h3>
+            <p class="modal-sub" id="rsvpModalSub">Lütfen isim ve kişi sayısını yazınız.</p>
+            <form id="rsvpForm">
+                <label>
+                    <span>Adınız Soyadınız</span>
+                    <input type="text" id="rsvpName" required placeholder="Adınız Soyadınız" autocomplete="name">
+                </label>
+                <label id="rsvpCountLabel">
+                    <span>Kişi Sayısı</span>
+                    <input type="number" id="rsvpCount" min="1" max="10" value="1">
+                </label>
+                <label>
+                    <span>Mesajınız (opsiyonel)</span>
+                    <textarea id="rsvpMessage" rows="3" placeholder="Tebrik / mesaj"></textarea>
+                </label>
+                <button type="submit" class="rsvp-btn yes full">Gönder</button>
+            </form>
+            <p class="modal-info">Mesajınız WhatsApp üzerinden bize iletilecektir.</p>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
