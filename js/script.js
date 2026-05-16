@@ -55,33 +55,18 @@ envelope.setAttribute('tabindex', '0');
 envelope.setAttribute('role', 'button');
 envelope.setAttribute('aria-label', 'Zarfı aç');
 
-/* ----- 4) Müzik kontrolü (otomatik 15. saniyeden başlar) ----- */
+/* ----- 4) Müzik (otomatik 15. saniyeden başlar) ----- */
 const music = document.getElementById('bgMusic');
-const musicBtn = document.getElementById('musicToggle');
-const musicText = musicBtn.querySelector('.music-text');
-const MUSIC_START_AT = 15; // saniye
-let musicOn = false;
+const MUSIC_START_AT = 5; // saniye
+let musicPlaying = false;
 let autoTried = false;
-
-function setBtnPlaying(on) {
-    if (on) {
-        musicBtn.classList.add('playing');
-        musicText.textContent = 'Müziği kapat';
-    } else {
-        musicBtn.classList.remove('playing');
-        musicText.textContent = 'Müziği aç';
-    }
-    musicOn = on;
-}
 
 function seekAndPlay() {
     if (!music) return Promise.reject('no audio');
-    // Sesli oynatma (tarayıcı izin verirse)
     try {
         if (isFinite(music.duration) && music.duration > MUSIC_START_AT) {
             music.currentTime = MUSIC_START_AT;
         } else {
-            // Metadata henüz yüklenmediyse yüklendiğinde set et
             const onMeta = () => {
                 if (music.duration > MUSIC_START_AT) music.currentTime = MUSIC_START_AT;
                 music.removeEventListener('loadedmetadata', onMeta);
@@ -94,48 +79,32 @@ function seekAndPlay() {
     return music.play();
 }
 
-function toggleMusic() {
-    if (!music) return;
-    if (musicOn) {
-        music.pause();
-        setBtnPlaying(false);
-    } else {
-        seekAndPlay().then(() => setBtnPlaying(true))
-                     .catch(() => showToast('Müzik dosyası oynatılamadı.'));
-    }
-}
-musicBtn.addEventListener('click', toggleMusic);
-
-// 1) Sayfa açılır açılmaz otomatik oynatmayı dene
 function tryAutoplay() {
     if (autoTried) return;
     autoTried = true;
     seekAndPlay()
-        .then(() => setBtnPlaying(true))
+        .then(() => { musicPlaying = true; })
         .catch(() => {
-            // Tarayıcı sesli autoplay'i engelledi → ilk dokunuşta başlatacağız
             autoTried = false;
             installFirstInteractionListener();
         });
 }
 
-// 2) Tarayıcı izin vermezse: kullanıcı sayfaya dokununca/tıklayınca/scroll edince başla
 function installFirstInteractionListener() {
     const events = ['pointerdown', 'touchstart', 'keydown', 'scroll', 'click'];
     const handler = () => {
-        if (musicOn) return cleanup();
+        if (musicPlaying) return cleanup();
         seekAndPlay().then(() => {
-            setBtnPlaying(true);
+            musicPlaying = true;
             cleanup();
         }).catch(() => { /* sessizce vazgeç */ });
     };
     function cleanup() {
         events.forEach(ev => window.removeEventListener(ev, handler, { capture: true }));
     }
-    events.forEach(ev => window.addEventListener(ev, handler, { capture: true, passive: true, once: false }));
+    events.forEach(ev => window.addEventListener(ev, handler, { capture: true, passive: true }));
 }
 
-// Sayfa hazır olunca otomatik başlatmayı dene
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
     setTimeout(tryAutoplay, 200);
 } else {
