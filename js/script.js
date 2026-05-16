@@ -152,7 +152,7 @@ function tick() {
     const h = Math.floor(diff / 3600000);  diff -= h * 3600000;
     const m = Math.floor(diff / 60000);    diff -= m * 60000;
     const s = Math.floor(diff / 1000);
-    cdDays.textContent  = pad(d, 3);
+    cdDays.textContent  = String(Math.max(0, Math.floor(d)));
     cdHours.textContent = pad(h);
     cdMins.textContent  = pad(m);
     cdSecs.textContent  = pad(s);
