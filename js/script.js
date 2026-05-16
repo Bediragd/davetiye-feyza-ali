@@ -85,63 +85,63 @@ envelope.setAttribute('tabindex', '0');
 envelope.setAttribute('role', 'button');
 envelope.setAttribute('aria-label', 'Zarfı aç');
 
-/* ----- 4) Müzik — sessiz autoplay + ilk dokunuşta anında ses açılır ----- */
+/* ----- 4) Müzik — sade ve garanti çalan yaklaşım ----- */
 const music = document.getElementById('bgMusic');
-const MUSIC_START_AT = 5; // saniye (parçanın baştan kaç saniyesinden başlayacak)
-let soundUnlocked = false;
+const MUSIC_START_AT = 5; // saniye
+let musicStarted = false;
 
 function seekToStart() {
     if (!music) return;
     try {
         if (isFinite(music.duration) && music.duration > MUSIC_START_AT) {
             music.currentTime = MUSIC_START_AT;
-        } else {
-            const onMeta = () => {
-                if (music.duration > MUSIC_START_AT) {
-                    try { music.currentTime = MUSIC_START_AT; } catch (_) {}
-                }
-                music.removeEventListener('loadedmetadata', onMeta);
-            };
-            music.addEventListener('loadedmetadata', onMeta);
         }
     } catch (_) { /* ignore */ }
 }
 
-function startSilentAutoplay() {
+// İlk: sessiz çalmaya başlamayı dene (tarayıcı izin verir)
+function trySilentAutoplay() {
     if (!music) return;
     music.muted = true;
     music.volume = 0;
     seekToStart();
     const p = music.play();
-    if (p && typeof p.catch === 'function') {
-        p.catch(() => { /* sessiz autoplay bile bloklandıysa interaction bekleyeceğiz */ });
-    }
+    if (p && typeof p.catch === 'function') p.catch(() => {});
 }
 
-function unlockSound() {
-    if (soundUnlocked || !music) return;
-    soundUnlocked = true;
+// Kullanıcı dokunduğunda: sesi aç ve play çağrısını gesture içinde yap
+function startMusicWithSound() {
+    if (musicStarted || !music) return;
+    musicStarted = true;
     music.muted = false;
     music.volume = 0.75;
-    if (music.paused) {
-        seekToStart();
-        const p = music.play();
-        if (p && typeof p.catch === 'function') p.catch(() => {});
+    seekToStart();
+    const p = music.play();
+    if (p && typeof p.catch === 'function') {
+        p.catch(() => { musicStarted = false; });
     }
 }
 
-function installFirstInteractionListener() {
-    const events = ['pointerdown', 'touchstart', 'keydown', 'scroll', 'click', 'mousemove'];
-    const handler = () => {
-        unlockSound();
-        events.forEach(ev => window.removeEventListener(ev, handler, { capture: true }));
-    };
-    events.forEach(ev => window.addEventListener(ev, handler, { capture: true, passive: true }));
+// Metadata yüklendiğinde de seek noktasına gitmeyi garantile
+function bindMetaSeek() {
+    if (!music) return;
+    music.addEventListener('loadedmetadata', () => {
+        if (music.currentTime < 1) seekToStart();
+    }, { once: true });
 }
 
 function initMusic() {
-    startSilentAutoplay();
-    installFirstInteractionListener();
+    if (!music) return;
+    bindMetaSeek();
+    trySilentAutoplay();
+    const events = ['pointerdown', 'touchstart', 'click', 'keydown', 'scroll'];
+    events.forEach(ev => {
+        document.addEventListener(ev, startMusicWithSound, {
+            once: true,
+            capture: true,
+            passive: true
+        });
+    });
 }
 
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
