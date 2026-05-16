@@ -63,29 +63,92 @@ envelope.setAttribute('tabindex', '0');
 envelope.setAttribute('role', 'button');
 envelope.setAttribute('aria-label', 'Zarfı aç');
 
-/* ----- 4) Müzik kontrolü ----- */
+/* ----- 4) Müzik kontrolü (otomatik 15. saniyeden başlar) ----- */
 const music = document.getElementById('bgMusic');
 const musicBtn = document.getElementById('musicToggle');
 const musicText = musicBtn.querySelector('.music-text');
+const MUSIC_START_AT = 15; // saniye
 let musicOn = false;
+let autoTried = false;
+
+function setBtnPlaying(on) {
+    if (on) {
+        musicBtn.classList.add('playing');
+        musicText.textContent = 'Müziği kapat';
+    } else {
+        musicBtn.classList.remove('playing');
+        musicText.textContent = 'Müziği aç';
+    }
+    musicOn = on;
+}
+
+function seekAndPlay() {
+    if (!music) return Promise.reject('no audio');
+    // Sesli oynatma (tarayıcı izin verirse)
+    try {
+        if (isFinite(music.duration) && music.duration > MUSIC_START_AT) {
+            music.currentTime = MUSIC_START_AT;
+        } else {
+            // Metadata henüz yüklenmediyse yüklendiğinde set et
+            const onMeta = () => {
+                if (music.duration > MUSIC_START_AT) music.currentTime = MUSIC_START_AT;
+                music.removeEventListener('loadedmetadata', onMeta);
+            };
+            music.addEventListener('loadedmetadata', onMeta);
+        }
+    } catch (_) { /* ignore */ }
+    music.muted = false;
+    music.volume = 0.7;
+    return music.play();
+}
 
 function toggleMusic() {
     if (!music) return;
     if (musicOn) {
         music.pause();
-        musicBtn.classList.remove('playing');
-        musicText.textContent = 'Müziği aç';
+        setBtnPlaying(false);
     } else {
-        music.play().then(() => {
-            musicBtn.classList.add('playing');
-            musicText.textContent = 'Müziği kapat';
-        }).catch(() => {
-            showToast('Müzik dosyası bulunamadı: assets/music.mp3');
-        });
+        seekAndPlay().then(() => setBtnPlaying(true))
+                     .catch(() => showToast('Müzik dosyası oynatılamadı.'));
     }
-    musicOn = !musicOn;
 }
 musicBtn.addEventListener('click', toggleMusic);
+
+// 1) Sayfa açılır açılmaz otomatik oynatmayı dene
+function tryAutoplay() {
+    if (autoTried) return;
+    autoTried = true;
+    seekAndPlay()
+        .then(() => setBtnPlaying(true))
+        .catch(() => {
+            // Tarayıcı sesli autoplay'i engelledi → ilk dokunuşta başlatacağız
+            autoTried = false;
+            installFirstInteractionListener();
+        });
+}
+
+// 2) Tarayıcı izin vermezse: kullanıcı sayfaya dokununca/tıklayınca/scroll edince başla
+function installFirstInteractionListener() {
+    const events = ['pointerdown', 'touchstart', 'keydown', 'scroll', 'click'];
+    const handler = () => {
+        if (musicOn) return cleanup();
+        seekAndPlay().then(() => {
+            setBtnPlaying(true);
+            cleanup();
+        }).catch(() => { /* sessizce vazgeç */ });
+    };
+    function cleanup() {
+        events.forEach(ev => window.removeEventListener(ev, handler, { capture: true }));
+    }
+    events.forEach(ev => window.addEventListener(ev, handler, { capture: true, passive: true, once: false }));
+}
+
+// Sayfa hazır olunca otomatik başlatmayı dene
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(tryAutoplay, 200);
+} else {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(tryAutoplay, 200));
+}
 
 /* ----- 5) Geri sayım ----- */
 const cdDays  = document.getElementById('cdDays');
