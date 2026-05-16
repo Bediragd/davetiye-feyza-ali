@@ -205,16 +205,24 @@ html { scroll-behavior: smooth; }
 }
 
 .monogram {
-    font-family: var(--font-script-2);
-    font-size: 28px;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
     color: var(--gold-dark);
     line-height: 1;
     display: inline-flex;
     align-items: baseline;
-    gap: 4px;
+    gap: 2px;
     text-shadow: 0 1px 0 rgba(255,255,255,0.6);
 }
-.monogram .amp-small { font-size: 18px; opacity: 0.8; }
+.monogram .amp-small {
+    font-size: 16px;
+    letter-spacing: 0;
+    opacity: 0.85;
+    margin: 0 2px;
+}
 
 /* Mühür */
 .wax-seal {
@@ -233,13 +241,16 @@ html { scroll-behavior: smooth; }
     display: grid;
     place-items: center;
     color: #fff7d6;
-    font-family: var(--font-script-2);
-    font-size: 20px;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
     z-index: 7;
     transition: transform 0.5s ease, opacity 0.5s ease;
     pointer-events: none;
 }
-.wax-seal small { font-size: 12px; opacity: 0.8; }
+.wax-seal small { font-size: 11px; opacity: 0.85; margin: 0 1px; }
 .envelope.opened .wax-seal {
     transform: translate(-50%, -50%) scale(0.6);
     opacity: 0;
