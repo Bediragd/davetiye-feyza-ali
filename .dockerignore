@@ -1,0 +1,17 @@
+.git
+.gitignore
+.github
+.vscode
+.idea
+.cursor
+.DS_Store
+Thumbs.db
+*.log
+*.md
+node_modules
+dist
+build
+*.tmp
+*.bak
+.env*
+README.md
