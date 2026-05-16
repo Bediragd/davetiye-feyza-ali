@@ -1,19 +1,21 @@
 /* ============================================================
    Feyza & Ali — Nişan Davetiyesi
-   Renk paleti: krem / pembe / rose gold / koyu kahve
+   Renk paleti: pür krem & altın (pembe yok)
    ============================================================ */
 
 :root {
-    /* Krem paleti */
-    --bg-1: #f5ead4;
-    --bg-2: #faf3e2;
-    --bg-3: #ecddbe;
-    --paper: #fbf4e6;
-    --paper-2: #efe0c4;
+    /* Pür krem tonları (sarı temelli, kırmızı/pembe undertone yok) */
+    --bg-1: #f4ebd0;
+    --bg-2: #fbf5e0;
+    --bg-3: #e8dbb6;
+    --paper: #fcf6e2;
+    --paper-2: #ede0bd;
+    --cream-soft: #f3e8c4;
+    --cream-warm: #ead8a8;
 
-    /* Vurgu — pembe tonlar kaldırıldı, krem & altın */
-    --rose: #c9b189;
-    --rose-dark: #9a7c47;
+    /* Vurgu — tamamı altın/krem */
+    --rose: #cfbb85;
+    --rose-dark: #8c6f2a;
     --gold: #c9a961;
     --gold-dark: #8a6a2c;
     --ink: #5d4a2e;
@@ -42,9 +44,9 @@ body {
     min-height: 100vh;
     background:
         radial-gradient(1200px 600px at 50% -200px, rgba(255,255,255,0.7), transparent 60%),
-        radial-gradient(800px 600px at 100% 100%, rgba(235,210,160,0.45), transparent 60%),
-        radial-gradient(800px 600px at 0% 80%, rgba(201,169,97,0.22), transparent 60%),
-        linear-gradient(180deg, #fbf4e4 0%, #f5ead4 40%, #ecddbe 100%);
+        radial-gradient(800px 600px at 100% 100%, rgba(225,200,140,0.40), transparent 60%),
+        radial-gradient(800px 600px at 0% 80%, rgba(201,169,97,0.20), transparent 60%),
+        linear-gradient(180deg, #fcf6e0 0%, #f4ebd0 50%, #e8dbb6 100%);
     background-attachment: fixed;
     position: relative;
 }
@@ -166,11 +168,11 @@ html { scroll-behavior: smooth; }
 .envelope-back {
     position: absolute;
     inset: 0;
-    background: linear-gradient(160deg, #f7e5d3 0%, #ecd1ba 100%);
+    background: linear-gradient(160deg, #f5e8c4 0%, #ead8a8 100%);
     border-radius: 6px;
     box-shadow:
         inset 0 0 0 1px rgba(255,255,255,0.5),
-        0 18px 30px -12px rgba(120,80,30,0.35);
+        0 18px 30px -12px rgba(120,90,30,0.35);
 }
 
 /* Yan kapaklar */
@@ -178,7 +180,7 @@ html { scroll-behavior: smooth; }
 .envelope-front-right,
 .envelope-front-bottom {
     position: absolute;
-    background: linear-gradient(160deg, #fbf0e0, #efd7c0);
+    background: linear-gradient(160deg, #faf1cf, #ecdca5);
     z-index: 4;
 }
 .envelope-front-left {
@@ -204,7 +206,7 @@ html { scroll-behavior: smooth; }
 .envelope-flap {
     position: absolute;
     inset: 0 0 50% 0;
-    background: linear-gradient(180deg, #f9ead8, #ecd2bb);
+    background: linear-gradient(180deg, #f7eaba, #e8d59c);
     clip-path: polygon(0 0, 100% 0, 50% 100%);
     transform-origin: top center;
     transform: rotateX(0deg);
@@ -278,7 +280,7 @@ html { scroll-behavior: smooth; }
 .letter {
     position: absolute;
     inset: 6px;
-    background: linear-gradient(180deg, #fffaf2, #f6e7d4);
+    background: linear-gradient(180deg, #fffbe8, #f5ead0);
     border-radius: 4px;
     box-shadow: inset 0 0 0 1px rgba(201,169,97,0.4), 0 1px 0 rgba(0,0,0,0.04);
     z-index: 2;
@@ -346,7 +348,7 @@ html { scroll-behavior: smooth; }
 }
 
 .card {
-    background: linear-gradient(180deg, var(--paper) 0%, #f4e4cf 100%);
+    background: linear-gradient(180deg, var(--paper) 0%, #f0e3bc 100%);
     border-radius: 14px;
     padding: 28px 22px;
     text-align: center;
@@ -545,11 +547,11 @@ html { scroll-behavior: smooth; }
     min-width: 130px;
 }
 .rsvp-btn.yes {
-    background: linear-gradient(180deg, #d4a574, #b88a55);
+    background: linear-gradient(180deg, #c9a961, #8a6a2c);
     color: #fff;
 }
 .rsvp-btn.no {
-    background: linear-gradient(180deg, #efe0c4, #d5c197);
+    background: linear-gradient(180deg, #f0e3bc, #d5c084);
     color: #6b552b;
 }
 .rsvp-btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
@@ -651,7 +653,7 @@ html { scroll-behavior: smooth; }
 .modal {
     width: 100%;
     max-width: 360px;
-    background: linear-gradient(180deg, #fffaf2, #f6e7d4);
+    background: linear-gradient(180deg, #fffbe8, #f5ead0);
     border-radius: 16px;
     padding: 24px 22px 22px;
     box-shadow: 0 20px 50px -20px rgba(0,0,0,0.5);
