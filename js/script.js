@@ -277,7 +277,7 @@ function spawnHearts(count = 12) {
         h.style.animationDelay = (Math.random() * 0.6) + 's';
         h.style.fontSize = (14 + Math.random() * 18) + 'px';
         h.style.color = '#ffffff';
-        h.style.textShadow = '0 1px 3px rgba(168,98,104,0.35), 0 0 8px rgba(255,255,255,0.6)';
+        h.style.textShadow = '0 1px 3px rgba(154,124,71,0.45), 0 0 8px rgba(255,255,255,0.7)';
         container.appendChild(h);
         setTimeout(() => h.remove(), (dur + 1) * 1000);
     }
