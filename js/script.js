@@ -26,18 +26,12 @@ const CONFIG = {
     rsvpEmail: "",
 };
 
-/* ----- 2) Sayfa sekmeleri ----- */
-const tabs = document.querySelectorAll('.tab-btn');
-const pages = document.querySelectorAll('.page');
-
-tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const target = btn.dataset.page;
-        tabs.forEach(b => b.classList.toggle('active', b.dataset.page === target));
-        pages.forEach(p => p.classList.toggle('active', p.id === `page${target}`));
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-});
+/* ----- 2) Sayfa geçişi (otomatik scroll) ----- */
+function scrollToPage2() {
+    const p2 = document.getElementById('page2');
+    if (!p2) return;
+    p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 /* ----- 3) Zarf açma ----- */
 const envelope = document.getElementById('envelope');
@@ -51,10 +45,8 @@ function openEnvelope() {
     if (envelopeHint) envelopeHint.style.display = 'none';
     spawnHearts(14);
 
-    // Açıldıktan sonra Sayfa 2'ye geçişi öner
-    setTimeout(() => {
-        // Kullanıcı isterse manuel geçer; otomatik geçiş yapmıyoruz.
-    }, 1500);
+    // 3 saniye sonra otomatik olarak Sayfa 2'ye akıcı kayış
+    setTimeout(scrollToPage2, 3000);
 }
 
 envelope.addEventListener('click', openEnvelope);
