@@ -106,11 +106,26 @@ body::before {
     padding-bottom: 40px;
 }
 
-/* İki sayfa arasına ince bir ayraç */
+/* Sayfa 2 — başta gizli, zarf açılınca belirir */
 .page-2 {
+    display: none;
     border-top: 1px dashed rgba(154, 124, 71, 0.30);
     padding-top: 18px;
     margin-top: 8px;
+}
+.page-2.revealed {
+    display: block;
+    animation: revealSlide 0.9s cubic-bezier(.22,1,.36,1);
+}
+@keyframes revealSlide {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeIn {

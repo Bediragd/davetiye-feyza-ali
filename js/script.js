@@ -66,8 +66,17 @@ function openEnvelope() {
     if (envelopeHint) envelopeHint.style.display = 'none';
     spawnHearts(14);
 
-    // 3 saniye sonra otomatik olarak Sayfa 2'ye akıcı kayış
-    setTimeout(scrollToPage2, 3000);
+    // 1.5 saniye sonra Sayfa 2 belirir ve sayfa oraya akıcıca kayar
+    setTimeout(() => {
+        const p2 = document.getElementById('page2');
+        if (p2) {
+            p2.classList.add('revealed');
+            // DOM güncellensin ki scroll doğru hesaplansın
+            requestAnimationFrame(() => {
+                requestAnimationFrame(scrollToPage2);
+            });
+        }
+    }, 1500);
 }
 
 envelope.addEventListener('click', openEnvelope);
