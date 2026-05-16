@@ -26,11 +26,32 @@ const CONFIG = {
     rsvpEmail: "",
 };
 
-/* ----- 2) Sayfa geçişi (otomatik scroll) ----- */
+/* ----- 2) Sayfa geçişi (otomatik smooth scroll, mobil dahil) ----- */
+function smoothScrollTo(targetY, duration = 900) {
+    const startY = window.pageYOffset || document.documentElement.scrollTop;
+    const distance = targetY - startY;
+    if (Math.abs(distance) < 4) return;
+    const startTime = performance.now();
+    const easeInOutCubic = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    function step(now) {
+        const elapsed = now - startTime;
+        const t = Math.min(1, elapsed / duration);
+        window.scrollTo(0, startY + distance * easeInOutCubic(t));
+        if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
 function scrollToPage2() {
     const p2 = document.getElementById('page2');
     if (!p2) return;
-    p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const rect = p2.getBoundingClientRect();
+    const top = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 6;
+    try {
+        smoothScrollTo(top, 900);
+    } catch (_) {
+        p2.scrollIntoView();
+    }
 }
 
 /* ----- 3) Zarf açma ----- */
