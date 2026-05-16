@@ -11,9 +11,9 @@ const CONFIG = {
     groom: "Ali",
     surname: "Ağdemir",
     // Tarih ISO formatında: YYYY-MM-DDTHH:MM:SS (yerel saat)
-    eventDate: "2026-05-31T19:00:00",
+    eventDate: "2026-05-31T12:00:00",
     eventDateDisplay: "31.05.2026",
-    eventTimeDisplay: "19.00",
+    eventTimeDisplay: "12.00",
     venue: {
         name: "Diva Davet Evi",
         address: "Mehmetçik Mah. 7053. Sok. 2/1, 63000 Karaköprü / Şanlıurfa",
@@ -87,7 +87,7 @@ envelope.setAttribute('aria-label', 'Zarfı aç');
 
 /* ----- 4) Müzik — sade ve garanti çalan yaklaşım ----- */
 const music = document.getElementById('bgMusic');
-const MUSIC_START_AT = 5; // saniye
+const MUSIC_START_AT = 13; // saniye
 let musicStarted = false;
 
 function seekToStart() {
@@ -95,8 +95,27 @@ function seekToStart() {
     try {
         if (isFinite(music.duration) && music.duration > MUSIC_START_AT) {
             music.currentTime = MUSIC_START_AT;
+        } else if (music.seekable && music.seekable.length > 0 &&
+                   music.seekable.end(0) > MUSIC_START_AT) {
+            music.currentTime = MUSIC_START_AT;
         }
     } catch (_) { /* ignore */ }
+}
+
+// O ana kadar yeterli buffer yüklenmediyse, yüklenince tekrar dene
+function ensureSeekWhenReady() {
+    if (!music) return;
+    const onCanPlay = () => {
+        try {
+            if (music.currentTime < MUSIC_START_AT - 0.5 &&
+                music.duration > MUSIC_START_AT) {
+                music.currentTime = MUSIC_START_AT;
+            }
+        } catch (_) {}
+    };
+    music.addEventListener('loadedmetadata', onCanPlay);
+    music.addEventListener('canplay', onCanPlay);
+    music.addEventListener('canplaythrough', onCanPlay);
 }
 
 // İlk: sessiz çalmaya başlamayı dene (tarayıcı izin verir)
@@ -122,17 +141,9 @@ function startMusicWithSound() {
     }
 }
 
-// Metadata yüklendiğinde de seek noktasına gitmeyi garantile
-function bindMetaSeek() {
-    if (!music) return;
-    music.addEventListener('loadedmetadata', () => {
-        if (music.currentTime < 1) seekToStart();
-    }, { once: true });
-}
-
 function initMusic() {
     if (!music) return;
-    bindMetaSeek();
+    ensureSeekWhenReady();
     trySilentAutoplay();
     const events = ['pointerdown', 'touchstart', 'click', 'keydown', 'scroll'];
     events.forEach(ev => {
