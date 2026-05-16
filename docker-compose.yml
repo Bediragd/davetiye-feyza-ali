@@ -5,31 +5,10 @@ services:
     container_name: davetiye-feyza-ali
     restart: unless-stopped
 
-    # ============ SEÇENEK A: Direkt port (reverse proxy yoksa) ============
-    # 80 portu doluysa bunu 8080 vb. değiştir, Cloudflare/Nginx önüne koy.
+    # Sadece localhost'tan erişilebilir — dışarıya host'taki nginx servis edecek.
+    # 8090 portu doluysa boş bir port seçip aynısını nginx config'inde de güncelle.
     ports:
-      - "8080:80"
-
-    # ============ SEÇENEK B: nginx-proxy / jwilder kullanıyorsan ============
-    # 'ports' satırlarını sil, aşağıdaki environment'ları aç:
-    # environment:
-    #   VIRTUAL_HOST: davetiye-feyza-ali-agdemir.com,www.davetiye-feyza-ali-agdemir.com
-    #   VIRTUAL_PORT: "80"
-    #   LETSENCRYPT_HOST: davetiye-feyza-ali-agdemir.com,www.davetiye-feyza-ali-agdemir.com
-    #   LETSENCRYPT_EMAIL: senin-mailin@example.com
-    # networks:
-    #   - proxy
-
-    # ============ SEÇENEK C: Traefik kullanıyorsan ============
-    # 'ports' satırlarını sil, aşağıdaki labels'ı aç:
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.davetiye.rule=Host(`davetiye-feyza-ali-agdemir.com`) || Host(`www.davetiye-feyza-ali-agdemir.com`)"
-    #   - "traefik.http.routers.davetiye.entrypoints=websecure"
-    #   - "traefik.http.routers.davetiye.tls.certresolver=letsencrypt"
-    #   - "traefik.http.services.davetiye.loadbalancer.server.port=80"
-    # networks:
-    #   - proxy
+      - "127.0.0.1:8090:80"
 
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost/"]
@@ -37,8 +16,3 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-
-# Reverse proxy network'üne katılacaksan:
-# networks:
-#   proxy:
-#     external: true
