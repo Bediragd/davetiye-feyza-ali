@@ -13,10 +13,10 @@ const CONFIG = {
     eventTimeDisplay: '20.00',
     eventDateFooter: '18 EKİM 2026',
     locationDisplay: 'Şanlıurfa',
-    rsvpWhatsapp: '905332127682',
+    rsvpApi: '/api/rsvp',
 
     venue: {
-        name: 'Diva Davet Evi',
+        name: 'Beyaz Saray Düğün Salonu',
         address: 'Mehmetçik Mah. 7053. Sok. 2/1, 63000 Karaköprü / Şanlıurfa',
         mapUrl: 'https://www.google.com/maps/search/?api=1&query=37.15291837944692,38.813335712511',
         mapEmbed: 'https://www.google.com/maps/embed?pb=!3m2!1str!2str!4v1783706744832!5m2!1str!2str!6m8!1m7!1sgsL2CfeemO7jAhzdlXDrVA!2m2!1d37.15291837944692!2d38.813335712511!3f145.0524785589645!4f-7.335906145883513!5f1.4291491911355907'
@@ -27,7 +27,7 @@ const CONFIG = {
             icon: 'favorite',
             title: 'Düğün',
             time: '20.00',
-            venueName: 'Diva Davet Evi',
+            venueName: 'Beyaz Saray Düğün Salonu',
             address: 'Mehmetçik Mah. 7053. Sok. 2/1, 63000 Karaköprü / Şanlıurfa',
             dressCode: null,
             mapUrl: 'https://www.google.com/maps/search/?api=1&query=37.15291837944692,38.813335712511',
@@ -40,6 +40,7 @@ const CONFIG = {
         hero: 'assets/photos/hero.png',
         couple: 'assets/photos/couple.png',
         storyIsteme: 'assets/photos/story-isteme.png',
+        storyIstemeCouple: 'assets/photos/story-isteme-couple.png',
         storyNisan1: 'assets/photos/story-nisan-1.png',
         storyNisan2: 'assets/photos/story-nisan-2.png',
         gallery: [
@@ -247,35 +248,68 @@ function initNavigation() {
     });
 }
 
-/* ----- RSVP WhatsApp ----- */
+/* ----- Mesaj gönder (sunucuya txt) ----- */
 function initRSVP() {
-    rsvpForm?.addEventListener('submit', (e) => {
+    const attendingEl = document.getElementById('rsvpAttending');
+    const guestsGroup = document.getElementById('guestsGroup');
+    const submitBtn = document.getElementById('rsvpSubmit');
+
+    function toggleGuests() {
+        const show = attendingEl?.value === 'yes';
+        if (guestsGroup) guestsGroup.style.display = show ? '' : 'none';
+        const guestsInput = document.getElementById('rsvpGuests');
+        if (guestsInput) guestsInput.required = show;
+    }
+    attendingEl?.addEventListener('change', toggleGuests);
+    toggleGuests();
+
+    rsvpForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const attending = document.getElementById('rsvpAttending')?.value;
-        const guests = document.getElementById('rsvpGuests')?.value || '1';
+        const name = document.getElementById('rsvpName')?.value?.trim() || '';
+        const attending = attendingEl?.value;
+        const guests = document.getElementById('rsvpGuests')?.value;
         const note = document.getElementById('rsvpNote')?.value?.trim() || '';
 
+        if (!name) {
+            showToast('Lütfen adınızı yazın.');
+            return;
+        }
         if (!attending) {
             showToast('Lütfen katılım durumunuzu seçin.');
             return;
         }
 
-        const answer = attending === 'yes' ? 'Evet, katılacağım' : 'Maalesef katılamayacağım';
-        const msg = [
-            `Merhaba, ${CONFIG.bride} & ${CONFIG.groom} düğün davetiyesi için yanıtım:`,
-            ``,
-            `Tarih: ${CONFIG.eventDateDisplay} — ${CONFIG.eventTimeDisplay}`,
-            `Katılım: ${answer}`,
-            attending === 'yes' ? `Kişi sayısı: ${guests}` : '',
-            note ? `Not: ${note}` : ''
-        ].filter(Boolean).join('\n');
+        const payload = { name, attending, note };
+        if (attending === 'yes') payload.guests = guests;
 
-        const url = `https://wa.me/${CONFIG.rsvpWhatsapp}?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank');
+        submitBtn?.setAttribute('disabled', 'true');
+        const label = submitBtn?.querySelector('.rsvp-btn-label');
+        if (label) label.textContent = 'Gönderiliyor…';
 
-        if (attending === 'yes') spawnHearts(20);
-        showToast('WhatsApp açılıyor…');
+        try {
+            const res = await fetch(CONFIG.rsvpApi, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok || !data.ok) {
+                showToast(data.error || 'Gönderilemedi, tekrar deneyin.');
+                return;
+            }
+
+            if (attending === 'yes') spawnHearts(20);
+            showToast('Mesajınız iletildi, teşekkürler!');
+            rsvpForm.reset();
+            toggleGuests();
+        } catch {
+            showToast('Bağlantı hatası, lütfen tekrar deneyin.');
+        } finally {
+            submitBtn?.removeAttribute('disabled');
+            if (label) label.textContent = 'Gönder';
+        }
     });
 }
 

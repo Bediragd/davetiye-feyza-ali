@@ -32,6 +32,7 @@ build/
 .env.local
 .env.*.local
 
-# Geçici dosyalar
+# RSVP yanıtları (sunucuda birikir)
+data/rsvp.txt
 *.tmp
 *.bak

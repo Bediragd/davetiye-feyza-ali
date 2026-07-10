@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Feyza &amp; Ali — Düğün Davetiyesi</title>
-    <meta name="description" content="Feyza Ağdemir &amp; Ali Ağdemir düğün törenine davetlisiniz. 18 Ekim 2026 Pazar, 20.00 — Diva Davet Evi, Şanlıurfa.">
+    <meta name="description" content="Feyza Ağdemir &amp; Ali Ağdemir düğün törenine davetlisiniz. 18 Ekim 2026 Pazar, 20.00 — Beyaz Saray Düğün Salonu, Şanlıurfa.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
@@ -70,7 +70,7 @@
             <a href="#story">Hikayemiz</a>
             <a href="#events">Tören &amp; Kutlama</a>
             <a href="#countdown">Geri Sayım</a>
-            <a href="#rsvp">Lütfen Yanıtlayın</a>
+            <a href="#rsvp">Mesaj Gönderin</a>
             <a href="#gallery">Anılarımız</a>
         </nav>
     </div>
@@ -128,8 +128,13 @@
 
                     <article class="milestone">
                         <div class="timeline-dot"></div>
-                        <div class="milestone-photo milestone-photo-left">
-                            <img src="assets/photos/story-isteme.png" alt="İsteme" id="img-story-isteme">
+                        <div class="milestone-photos milestone-photos-left">
+                            <div class="milestone-photo">
+                                <img src="assets/photos/story-isteme.png" alt="İsteme" id="img-story-isteme">
+                            </div>
+                            <div class="milestone-photo milestone-photo-offset">
+                                <img src="assets/photos/story-isteme-couple.png" alt="İsteme — Feyza ve Ali" id="img-story-isteme-couple">
+                            </div>
                         </div>
                         <div class="milestone-text milestone-text-right">
                             <h3>İsteme</h3>
@@ -173,7 +178,7 @@
                 <div class="event-cards" id="event-cards"></div>
 
                 <div class="venue-map reveal" id="venue-map">
-                    <h3 class="venue-map-title" id="venue-map-title">Diva Davet Evi</h3>
+                    <h3 class="venue-map-title" id="venue-map-title">Beyaz Saray Düğün Salonu</h3>
                     <p class="venue-map-address">Mehmetçik Mah. 7053. Sok. 2/1, 63000 Karaköprü / Şanlıurfa</p>
                     <div class="map-wrap">
                         <iframe
@@ -228,14 +233,18 @@
                 </div>
             </div>
 
-            <!-- RSVP -->
+            <!-- Mesaj Gönderin -->
             <section id="rsvp" class="section reveal">
                 <div class="rsvp-header">
-                    <h2 class="section-title">Lütfen Yanıtlayın</h2>
-                    <p class="rsvp-sub">Bu özel günü bizimle paylaşmanız dileğiyle.</p>
+                    <h2 class="section-title">Mesaj Gönderin</h2>
+                    <p class="rsvp-sub">Katılım durumunuzu ve varsa mesajınızı bize iletebilirsiniz.</p>
                 </div>
 
                 <form class="rsvp-form" id="rsvpForm">
+                    <div class="form-group">
+                        <label for="rsvpName">Adınız soyadınız</label>
+                        <input type="text" id="rsvpName" required placeholder="Ad Soyad" autocomplete="name">
+                    </div>
                     <div class="form-group">
                         <label for="rsvpAttending">Katılıyor musunuz?</label>
                         <div class="select-wrap">
@@ -247,16 +256,16 @@
                             <span class="material-symbols-outlined">expand_more</span>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="guestsGroup">
                         <label for="rsvpGuests">Kişi sayısı</label>
-                        <input type="number" id="rsvpGuests" min="1" max="10" placeholder="Örn: 2">
+                        <input type="number" id="rsvpGuests" min="1" max="20" placeholder="Örn: 2">
                     </div>
                     <div class="form-group">
-                        <label for="rsvpNote">Notunuz (isteğe bağlı)</label>
-                        <textarea id="rsvpNote" rows="2" placeholder="Özel diyet gereksinimleri veya mesajınız..."></textarea>
+                        <label for="rsvpNote">Mesajınız (isteğe bağlı)</label>
+                        <textarea id="rsvpNote" rows="3" placeholder="Bizim için bir notunuz var mı?"></textarea>
                     </div>
-                    <button type="submit" class="btn-primary btn-full">
-                        WhatsApp ile Gönder
+                    <button type="submit" class="btn-primary btn-full" id="rsvpSubmit">
+                        <span class="rsvp-btn-label">Gönder</span>
                         <span class="material-symbols-outlined">send</span>
                     </button>
                 </form>
@@ -301,7 +310,7 @@
         </a>
         <a href="#rsvp" class="nav-item" data-section="rsvp">
             <span class="material-symbols-outlined">favorite</span>
-            <span>RSVP</span>
+            <span>Mesaj</span>
         </a>
         <a href="#gallery" class="nav-item" data-section="gallery">
             <span class="material-symbols-outlined">photo_library</span>

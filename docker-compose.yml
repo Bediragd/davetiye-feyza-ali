@@ -4,9 +4,9 @@ services:
     image: davetiye-feyza-ali:latest
     container_name: davetiye-feyza-ali
     restart: unless-stopped
+    depends_on:
+      - rsvp-api
 
-    # Sadece localhost'tan erişilebilir — dışarıya host'taki nginx servis edecek.
-    # 8090 portu doluysa boş bir port seçip aynısını nginx config'inde de güncelle.
     ports:
       - "127.0.0.1:8090:80"
 
@@ -16,3 +16,11 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  rsvp-api:
+    build: ./api
+    image: davetiye-rsvp-api:latest
+    container_name: davetiye-rsvp-api
+    restart: unless-stopped
+    volumes:
+      - ./data:/data

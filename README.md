@@ -8,7 +8,7 @@ Sinematik, mobil uyumlu düğün davetiyesi sitesi.
 - Hikâye timeline (İsteme, Nişan, Nişan Töreni)
 - Düğün programı + Google Harita
 - Canlı geri sayım
-- WhatsApp ile RSVP
+- Mesaj gönder formu (yanıtlar sunucuda `data/rsvp.txt` dosyasına yazılır)
 - Fotoğraf galerisi
 
 ## Bilgileri güncelleme
@@ -16,8 +16,32 @@ Sinematik, mobil uyumlu düğün davetiyesi sitesi.
 `js/script.js` dosyasındaki `CONFIG` nesnesini düzenleyin:
 
 - Tarih: `2026-10-18T20:00:00` (18 Ekim 2026 Pazar, 20.00)
-- Mekân: Diva Davet Evi, Karaköprü / Şanlıurfa
-- WhatsApp: `905332127682`
+- Mekân: Beyaz Saray Düğün Salonu, Karaköprü / Şanlıurfa
+
+## RSVP / Mesaj yanıtları
+
+Form gönderildiğinde yanıtlar sunucuda şu dosyaya eklenir:
+
+```
+/opt/davetiye-feyza-ali/data/rsvp.txt
+```
+
+Örnek kayıt:
+
+```
+====================================================
+Tarih      : 18.10.2026 20:15:32
+Ad Soyad   : Ayşe Yılmaz
+Katılım    : Evet, katılacağım
+Kişi sayısı: 2
+Mesaj      : Tebrikler!
+```
+
+Görüntülemek için sunucuda:
+
+```bash
+cat /opt/davetiye-feyza-ali/data/rsvp.txt
+```
 
 ## Fotoğraflar
 
@@ -29,6 +53,7 @@ Sinematik, mobil uyumlu düğün davetiyesi sitesi.
 | `hero.png` | Hero arka plan |
 | `couple.png` | Masaüstü portre |
 | `story-isteme.png` | Timeline — İsteme |
+| `story-isteme-couple.png` | Timeline — İsteme (çift) |
 | `story-nisan-1.png` | Timeline — Nişan |
 | `story-nisan-2.png` | Timeline — Nişan Töreni |
 | `gallery-1..3.png` | Galeri |

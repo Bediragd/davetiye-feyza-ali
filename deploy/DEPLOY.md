@@ -62,6 +62,17 @@ docker compose up -d --build
 
 Nginx ve SSL tarafına dokunmaya gerek yok.
 
+## Mesaj yanıtları (rsvp.txt)
+
+Formdan gelen yanıtlar sunucuda birikir:
+
+```bash
+cat /opt/davetiye-feyza-ali/data/rsvp.txt
+tail -f /opt/davetiye-feyza-ali/data/rsvp.txt   # canlı izleme
+```
+
+API container: `docker logs davetiye-rsvp-api`
+
 ## Sorun giderme
 
 - **Container ayakta mı?** `docker logs davetiye-feyza-ali`
