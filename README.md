@@ -1,77 +1,64 @@
-# Feyza & Ali — Dijital Nişan Davetiyesi
+# Feyza & Ali — Dijital Düğün Davetiyesi
 
-Şık, mobil uyumlu, animasyonlu bir dijital nişan davetiyesi sitesi.
-Tek bir HTML dosyasıyla çalışır — sunucuya gerek yoktur.
+Sinematik, mobil uyumlu düğün davetiyesi sitesi.
 
 ## Özellikler
 
-- Zarf açılma animasyonu (mum mühürlü)
-- Üst kısımda müzik aç/kapat butonu (`assets/music.mp3`)
-- **Sayfa 1:** Karşılama, monogram, "zarfa tıkla"
-- **Sayfa 2:**
-  - İsimler, tarih, saat ve davet metni
-  - Canlı geri sayım: **Nişanımıza Son** *(Gün : Saat : Dakika : Saniye)*
-  - RSVP — **Katılıyorum / Katılamıyorum** *(WhatsApp veya e-posta ile yanıt)*
-  - Tören yeri + Google Haritalar gömülü harita ve konum linki
-- Kalp animasyonu, duyarlı (responsive) tasarım, telefon ekranları için optimize.
+- Açılış ekranı (Davetiyeyi Aç)
+- Hikâye timeline (İsteme, Nişan, Nişan Töreni)
+- Düğün programı + Google Harita
+- Canlı geri sayım
+- WhatsApp ile RSVP
+- Fotoğraf galerisi
 
-## Hızlı Başlangıç
+## Bilgileri güncelleme
 
-`index.html` dosyasını çift tıklayarak tarayıcıda açabilirsiniz.
+`js/script.js` dosyasındaki `CONFIG` nesnesini düzenleyin:
 
-## Bilgileri Güncelleme
+- Tarih: `2026-10-18T20:00:00` (18 Ekim 2026 Pazar, 20.00)
+- Mekân: Diva Davet Evi, Karaköprü / Şanlıurfa
+- WhatsApp: `905332127682`
 
-Tüm metin/tarih/numara bilgileri tek bir yerden değiştirilir:
-`js/script.js` dosyasının üst kısmındaki `CONFIG` nesnesi.
+## Fotoğraflar
 
-```javascript
-const CONFIG = {
-    bride: "Feyza",
-    groom: "Ali",
-    surname: "Ağdemir",
-    eventDate: "2026-07-19T19:00:00",     // ISO formatı
-    eventDateDisplay: "19.07.2026",
-    eventTimeDisplay: "19.00",
-    venue: {
-        name: "Saray Event Center",
-        address: "Bağdat Cd. No: 123, Kadıköy / İstanbul",
-        query: "Saray Event Center, İstanbul"
-    },
-    rsvpWhatsapp: "905555555555",         // WhatsApp numarası (ülke kodu ile)
-    rsvpEmail: ""                         // İsteğe bağlı: e-posta
-};
+`assets/photos/` klasörü:
+
+| Dosya | Kullanım |
+|-------|----------|
+| `splash.png` | Açılış ekranı |
+| `hero.png` | Hero arka plan |
+| `couple.png` | Masaüstü portre |
+| `story-isteme.png` | Timeline — İsteme |
+| `story-nisan-1.png` | Timeline — Nişan |
+| `story-nisan-2.png` | Timeline — Nişan Töreni |
+| `gallery-1..3.png` | Galeri |
+
+## Yerel önizleme
+
+```bash
+python -m http.server 8080
 ```
 
-> Sayfadaki gözle görülen tarih/yer/isim bilgileri `index.html` içinde de geçer.
-> Tam tutarlılık için orada da değişiklik yapın *(Ctrl+H ile toplu değiştir)*.
+Tarayıcı: http://localhost:8080
 
-## Müzik Eklemek
+## Sunucuya deploy
 
-İstediğiniz müziği `assets/music.mp3` adıyla projeye atın.
-Üstteki "Müziği aç" butonu otomatik olarak çalıştıracaktır.
-Tarayıcılar otomatik oynatmaya izin vermediği için kullanıcı butona tıklamalıdır.
+```bash
+git pull
+docker compose up -d --build
+```
 
-## Konumu Değiştirmek
+Detaylar: `deploy/DEPLOY.md`
 
-`CONFIG.venue.query` alanına Google Maps üzerinde aratacağınız metni yazın
-(örn. `"Saray Event Center, İstanbul"` veya `"41.0082, 28.9784"` koordinatı).
-Harita ve "Konumu haritalarda görün" linki bu metne göre otomatik güncellenir.
-
-## Yayınlama (Ücretsiz Seçenekler)
-
-- **Netlify Drop:** Klasörü https://app.netlify.com/drop adresine sürükleyip bırakın.
-- **GitHub Pages:** Yeni repo oluşturup dosyaları yükleyin, Settings → Pages.
-- **Vercel:** `vercel` CLI ile bir komutta yayın.
-
-Yayınlandıktan sonra elinizdeki link davetlilere paylaşılabilir.
-
-## Dosya Yapısı
+## Dosya yapısı
 
 ```
 davetiye/
-├── index.html          # Ana sayfa (iki sayfa: karşılama + detaylar)
-├── css/styles.css      # Tüm stil ve animasyonlar
-├── js/script.js        # CONFIG + tüm etkileşimler
-├── assets/             # music.mp3 (opsiyonel) ve görseller
-└── README.md
+├── index.html
+├── css/styles.css
+├── js/script.js
+├── assets/photos/
+├── Dockerfile
+├── docker-compose.yml
+└── deploy/
 ```

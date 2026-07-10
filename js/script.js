@@ -1,325 +1,415 @@
 /* ============================================================
-   Feyza & Ali — Nişan Davetiyesi
-   Yapılandırma + etkileşimler
+   Sinematik Düğün Davetiyesi — JS
    ============================================================ */
 
-/* ----- 1) YAPILANDIRMA -----
-   Bilgileri buradan kolayca güncelleyebilirsiniz.
-*/
 const CONFIG = {
-    bride: "Feyza",
-    groom: "Ali",
-    surname: "Ağdemir",
-    // Tarih ISO formatında: YYYY-MM-DDTHH:MM:SS (yerel saat)
-    eventDate: "2026-05-31T12:00:00",
-    eventDateDisplay: "31.05.2026",
-    eventTimeDisplay: "12.00",
+    bride: 'Feyza',
+    groom: 'Ali',
+    surname: 'Ağdemir',
+    monogram: 'F&A',
+    brandTitle: 'Feyza & Ali',
+    eventDate: '2026-10-18T20:00:00',
+    eventDateDisplay: '18 Ekim 2026 Pazar',
+    eventTimeDisplay: '20.00',
+    eventDateFooter: '18 EKİM 2026',
+    locationDisplay: 'Şanlıurfa',
+    rsvpWhatsapp: '905332127682',
+
     venue: {
-        name: "Diva Davet Evi",
-        address: "Mehmetçik Mah. 7053. Sok. 2/1, 63000 Karaköprü / Şanlıurfa",
-        // Google Maps için arama veya koordinat
-        query: "Diva Davet Evi, Karaköprü, Şanlıurfa",
+        name: 'Diva Davet Evi',
+        address: 'Mehmetçik Mah. 7053. Sok. 2/1, 63000 Karaköprü / Şanlıurfa',
+        mapUrl: 'https://www.google.com/maps/search/?api=1&query=37.15291837944692,38.813335712511',
+        mapEmbed: 'https://www.google.com/maps/embed?pb=!3m2!1str!2str!4v1783706744832!5m2!1str!2str!6m8!1m7!1sgsL2CfeemO7jAhzdlXDrVA!2m2!1d37.15291837944692!2d38.813335712511!3f145.0524785589645!4f-7.335906145883513!5f1.4291491911355907'
     },
-    // RSVP yanıtlarının iletileceği WhatsApp numarası (ülke kodu ile, +veya 00 olmadan)
-    rsvpWhatsapp: "905332127682",
-    // RSVP yanıtlarının iletileceği e-posta (opsiyonel)
-    rsvpEmail: "",
+
+    events: [
+        {
+            icon: 'favorite',
+            title: 'Düğün',
+            time: '20.00',
+            venueName: 'Diva Davet Evi',
+            address: 'Mehmetçik Mah. 7053. Sok. 2/1, 63000 Karaköprü / Şanlıurfa',
+            dressCode: null,
+            mapUrl: 'https://www.google.com/maps/search/?api=1&query=37.15291837944692,38.813335712511',
+            primary: true
+        }
+    ],
+
+    photos: {
+        splash: 'assets/photos/splash.png',
+        hero: 'assets/photos/hero.png',
+        couple: 'assets/photos/couple.png',
+        storyIsteme: 'assets/photos/story-isteme.png',
+        storyNisan1: 'assets/photos/story-nisan-1.png',
+        storyNisan2: 'assets/photos/story-nisan-2.png',
+        gallery: [
+            'assets/photos/gallery-1.png',
+            'assets/photos/gallery-2.png',
+            'assets/photos/gallery-3.png'
+        ]
+    }
 };
 
-/* ----- 2) Sayfa geçişi (otomatik smooth scroll, mobil dahil) ----- */
-function smoothScrollTo(targetY, duration = 900) {
-    const startY = window.pageYOffset || document.documentElement.scrollTop;
-    const distance = targetY - startY;
-    if (Math.abs(distance) < 4) return;
-    const startTime = performance.now();
-    const easeInOutCubic = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-    function step(now) {
-        const elapsed = now - startTime;
-        const t = Math.min(1, elapsed / duration);
-        window.scrollTo(0, startY + distance * easeInOutCubic(t));
-        if (t < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-}
-
-function scrollToPage2() {
-    const p2 = document.getElementById('page2');
-    if (!p2) return;
-    const rect = p2.getBoundingClientRect();
-    const top = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 6;
-    try {
-        smoothScrollTo(top, 900);
-    } catch (_) {
-        p2.scrollIntoView();
-    }
-}
-
-/* ----- 3) Zarf açma ----- */
-const envelope = document.getElementById('envelope');
-const envelopeHint = document.getElementById('envelopeHint');
-let envelopeOpened = false;
-
-function openEnvelope() {
-    if (envelopeOpened) return;
-    envelopeOpened = true;
-    envelope.classList.add('opened');
-    if (envelopeHint) envelopeHint.style.display = 'none';
-    spawnHearts(14);
-
-    // 1.5 saniye sonra Sayfa 2 belirir ve sayfa oraya akıcıca kayar
-    setTimeout(() => {
-        const p2 = document.getElementById('page2');
-        if (p2) {
-            p2.classList.add('revealed');
-            // DOM güncellensin ki scroll doğru hesaplansın
-            requestAnimationFrame(() => {
-                requestAnimationFrame(scrollToPage2);
-            });
-        }
-    }, 1500);
-}
-
-envelope.addEventListener('click', openEnvelope);
-envelope.addEventListener('keypress', e => { if (e.key === 'Enter') openEnvelope(); });
-envelope.setAttribute('tabindex', '0');
-envelope.setAttribute('role', 'button');
-envelope.setAttribute('aria-label', 'Zarfı aç');
-
-/* ----- 4) Müzik — sade, garanti, 13. saniyeden başlar ----- */
-const music = document.getElementById('bgMusic');
-const MUSIC_START_AT = 13; // şarkının kendi içindeki başlama noktası (saniye)
-let musicStarted = false;
-let seekDone = false;
-
-// 13. saniyeye seek dener; uygun değilse hazır olunca tekrar dener
-function trySeek() {
-    if (!music || seekDone) return false;
-    try {
-        const dur = music.duration;
-        if (isFinite(dur) && dur > MUSIC_START_AT &&
-            music.seekable && music.seekable.length > 0 &&
-            music.seekable.end(0) >= MUSIC_START_AT) {
-            music.currentTime = MUSIC_START_AT;
-            seekDone = true;
-            return true;
-        }
-    } catch (_) { /* ignore */ }
-    return false;
-}
-
-// Audio meta verisi/buffer geldikçe seek'i tekrar dene
-function bindSeekRetry() {
-    if (!music) return;
-    const handler = () => {
-        if (trySeek()) {
-            ['loadedmetadata','loadeddata','canplay','canplaythrough','progress'].forEach(ev =>
-                music.removeEventListener(ev, handler)
-            );
-        }
-    };
-    ['loadedmetadata','loadeddata','canplay','canplaythrough','progress'].forEach(ev =>
-        music.addEventListener(ev, handler)
-    );
-}
-
-// 1) Sessiz autoplay: tarayıcı izin verir, müzik sessizce 13. sn'den başlar
-function trySilentAutoplay() {
-    if (!music) return;
-    music.muted = true;
-    music.volume = 0;
-    trySeek();
-    const p = music.play();
-    if (p && typeof p.catch === 'function') p.catch(() => {});
-}
-
-// 2) İlk kullanıcı etkileşiminde: sesi aç, gerekirse yeniden seek + play
-function startMusicWithSound() {
-    if (musicStarted || !music) return;
-    musicStarted = true;
-    music.muted = false;
-    music.volume = 0.75;
-    trySeek();
-    // Eğer seek hâlâ olmadıysa metadata gelir gelmez tekrar dene
-    if (!seekDone) {
-        music.addEventListener('loadedmetadata', () => trySeek(), { once: true });
-    }
-    const p = music.play();
-    if (p && typeof p.catch === 'function') {
-        p.catch(() => { musicStarted = false; });
-    }
-}
-
-function initMusic() {
-    if (!music) return;
-    music.load(); // buffer'ı hemen başlat
-    bindSeekRetry();
-    trySilentAutoplay();
-    const events = ['pointerdown', 'touchstart', 'click', 'keydown', 'scroll'];
-    events.forEach(ev => {
-        document.addEventListener(ev, startMusicWithSound, {
-            once: true,
-            capture: true,
-            passive: true
-        });
-    });
-}
-
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initMusic();
-} else {
-    document.addEventListener('DOMContentLoaded', initMusic);
-}
-
-/* ----- 5) Geri sayım ----- */
-const cdDays  = document.getElementById('cdDays');
-const cdHours = document.getElementById('cdHours');
-const cdMins  = document.getElementById('cdMins');
-const cdSecs  = document.getElementById('cdSecs');
-
-const eventTime = new Date(CONFIG.eventDate).getTime();
-
-function pad(n, w = 2) {
-    n = Math.max(0, Math.floor(n));
-    return String(n).padStart(w, '0');
-}
-
-function tick() {
-    const now = Date.now();
-    let diff = Math.max(0, eventTime - now);
-    const d = Math.floor(diff / 86400000); diff -= d * 86400000;
-    const h = Math.floor(diff / 3600000);  diff -= h * 3600000;
-    const m = Math.floor(diff / 60000);    diff -= m * 60000;
-    const s = Math.floor(diff / 1000);
-    cdDays.textContent  = String(Math.max(0, Math.floor(d)));
-    cdHours.textContent = pad(h);
-    cdMins.textContent  = pad(m);
-    cdSecs.textContent  = pad(s);
-}
-tick();
-setInterval(tick, 1000);
-
-/* ----- 6) Harita & link ----- */
-(function setMap() {
-    const q = encodeURIComponent(CONFIG.venue.query || CONFIG.venue.address);
-    const iframe = document.getElementById('venueMap');
-    const link = document.getElementById('mapLink');
-    if (iframe) iframe.src = `https://www.google.com/maps?q=${q}&output=embed`;
-    if (link) link.href = `https://www.google.com/maps?q=${q}`;
-})();
-
-/* ----- 7) RSVP modal ----- */
-const modal = document.getElementById('rsvpModal');
-const modalClose = document.getElementById('modalClose');
+/* ----- DOM refs ----- */
+const splash = document.getElementById('splash');
+const app = document.getElementById('app');
+const openBtn = document.getElementById('openInvite');
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const eventCards = document.getElementById('event-cards');
 const rsvpForm = document.getElementById('rsvpForm');
-const rsvpTitle = document.getElementById('rsvpModalTitle');
-const rsvpSub = document.getElementById('rsvpModalSub');
-const rsvpCountLabel = document.getElementById('rsvpCountLabel');
-let currentAnswer = 'yes';
+const toast = document.getElementById('toast');
+const bottomNav = document.getElementById('bottomNav');
 
-document.querySelectorAll('.rsvp-btn[data-answer]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        currentAnswer = btn.dataset.answer;
-        if (currentAnswer === 'yes') {
-            rsvpTitle.textContent = 'Katılıyorum';
-            rsvpSub.textContent = 'Sizi aramızda görmek bizi çok mutlu edecek.';
-            rsvpCountLabel.style.display = 'block';
-        } else {
-            rsvpTitle.textContent = 'Katılamıyorum';
-            rsvpSub.textContent = 'Düşünceleriniz için teşekkür ederiz.';
-            rsvpCountLabel.style.display = 'none';
-        }
-        openModal();
+/* ----- Init ----- */
+document.addEventListener('DOMContentLoaded', () => {
+    applyConfig();
+    renderEvents();
+    initSplashParticles();
+    initMainParticles();
+    initSplashOpen();
+    initCountdown();
+    initScrollReveal();
+    initNavigation();
+    initRSVP();
+    initGallery();
+    initImageFallbacks();
+    initVenueMap();
+});
+
+function applyConfig() {
+    document.title = `${CONFIG.bride} & ${CONFIG.groom} — Düğün Davetiyesi`;
+
+    setText('hero-bride', CONFIG.bride);
+    setText('hero-groom', CONFIG.groom);
+    setText('hero-date', `${CONFIG.eventDateDisplay} • ${CONFIG.eventTimeDisplay} • ${CONFIG.locationDisplay}`);
+    setText('footer-date', CONFIG.eventDateFooter);
+    setText('monogram', CONFIG.monogram);
+    setText('splash-monogram', CONFIG.monogram);
+    setText('footer-monogram', CONFIG.monogram);
+
+    document.querySelectorAll('.header-brand').forEach(el => {
+        el.textContent = CONFIG.brandTitle;
     });
-});
-
-function openModal() {
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden', 'false');
 }
-function closeModal() {
-    modal.classList.remove('show');
-    modal.setAttribute('aria-hidden', 'true');
+
+function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
 }
-modalClose.addEventListener('click', closeModal);
-modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-rsvpForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = document.getElementById('rsvpName').value.trim();
-    const count = document.getElementById('rsvpCount').value || 1;
-    const message = document.getElementById('rsvpMessage').value.trim();
+/* ----- Events cards ----- */
+function renderEvents() {
+    if (!eventCards) return;
+    eventCards.innerHTML = CONFIG.events.map(ev => `
+        <article class="event-card reveal">
+            <span class="material-symbols-outlined">${ev.icon}</span>
+            <h3>${ev.title}</h3>
+            <p class="event-time">${ev.time}</p>
+            ${ev.venueName ? `<p class="event-venue">${ev.venueName}</p>` : ''}
+            <p class="event-address">${ev.address}</p>
+            ${ev.dressCode ? `
+                <div class="event-dress">
+                    <span class="material-symbols-outlined">styler</span>
+                    ${ev.dressCode}
+                </div>` : ''}
+            <a href="${ev.mapUrl}" target="_blank" rel="noopener"
+               class="btn-map ${ev.primary ? 'primary' : 'secondary'}">
+                Haritada Aç
+            </a>
+        </article>
+    `).join('');
+}
 
-    if (!name) return;
-
-    const answerText = currentAnswer === 'yes' ? 'KATILIYORUM' : 'KATILAMIYORUM';
-
-    const lines = [
-        `Merhaba Feyza & Ali,`,
-        `Nişan davetiyesi yanıtı:`,
-        ``,
-        `Ad Soyad: ${name}`,
-        `Durum: ${answerText}`,
-    ];
-    if (currentAnswer === 'yes') lines.push(`Kişi Sayısı: ${count}`);
-    if (message) lines.push(`Mesaj: ${message}`);
-
-    const text = encodeURIComponent(lines.join('\n'));
-
-    if (CONFIG.rsvpWhatsapp) {
-        window.open(`https://wa.me/${CONFIG.rsvpWhatsapp}?text=${text}`, '_blank');
-    } else if (CONFIG.rsvpEmail) {
-        const subj = encodeURIComponent('Nişan Davet Yanıtı');
-        window.location.href = `mailto:${CONFIG.rsvpEmail}?subject=${subj}&body=${text}`;
-    } else {
-        showToast('Yanıtınız alındı. Teşekkür ederiz!');
+function initVenueMap() {
+    const iframe = document.getElementById('venue-map-iframe');
+    const title = document.getElementById('venue-map-title');
+    if (iframe && CONFIG.venue?.mapEmbed) {
+        iframe.src = CONFIG.venue.mapEmbed;
+        iframe.title = `${CONFIG.venue.name} konumu`;
     }
-
-    closeModal();
-    rsvpForm.reset();
-    if (currentAnswer === 'yes') spawnHearts(20);
-    showToast(currentAnswer === 'yes'
-        ? 'Teşekkür ederiz, sizi bekliyoruz!'
-        : 'Geri bildiriminiz için teşekkürler.');
-});
-
-/* ----- 8) Toast ----- */
-function showToast(msg) {
-    let t = document.querySelector('.toast');
-    if (!t) {
-        t = document.createElement('div');
-        t.className = 'toast';
-        document.body.appendChild(t);
+    if (title && CONFIG.venue?.name) {
+        title.textContent = CONFIG.venue.name;
     }
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+    const address = document.querySelector('.venue-map-address');
+    if (address && CONFIG.venue?.address) {
+        address.textContent = CONFIG.venue.address;
+    }
+    const mapLink = document.getElementById('venue-map-link');
+    if (mapLink && CONFIG.venue?.mapUrl) {
+        mapLink.href = CONFIG.venue.mapUrl;
+    }
 }
 
-/* ----- 9) Kalp yağmuru ----- */
+/* ----- Splash open ----- */
+function initSplashOpen() {
+    openBtn?.addEventListener('click', openInvitation);
+    splash?.addEventListener('click', (e) => {
+        if (e.target === splash || e.target.classList.contains('splash-bg')) {
+            openInvitation();
+        }
+    });
+}
+
+function openInvitation() {
+    splash?.classList.add('closing');
+    setTimeout(() => {
+        splash?.classList.add('hidden');
+        app?.classList.remove('hidden');
+        document.body.style.overflow = '';
+        spawnHearts(16);
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+    }, 900);
+}
+
+/* ----- Countdown ----- */
+function initCountdown() {
+    tickCountdown();
+    setInterval(tickCountdown, 1000);
+}
+
+function tickCountdown() {
+    const target = new Date(CONFIG.eventDate).getTime();
+    const now = Date.now();
+    const diff = Math.max(0, target - now);
+
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+
+    setText('cd-days', String(days));
+    setText('cd-hours', pad(hours));
+    setText('cd-minutes', pad(minutes));
+    setText('cd-seconds', pad(seconds));
+
+    const mini = document.getElementById('mini-countdown');
+    if (mini) {
+        if (diff <= 0) {
+            mini.innerHTML = '<span>Bugün o büyük gün!</span>';
+        } else {
+            mini.innerHTML = `
+                <div class="unit"><span>${days}</span><span>GÜN</span></div>
+                <span>:</span>
+                <div class="unit"><span>${pad(hours)}</span><span>SAAT</span></div>
+                <span>:</span>
+                <div class="unit"><span>${pad(minutes)}</span><span>DK</span></div>
+            `;
+        }
+    }
+}
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+/* ----- Scroll reveal ----- */
+let observer;
+
+function initScrollReveal() {
+    observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+}
+
+/* ----- Navigation ----- */
+function initNavigation() {
+    menuBtn?.addEventListener('click', () => {
+        mobileMenu?.classList.toggle('hidden');
+    });
+
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => mobileMenu?.classList.add('hidden'));
+    });
+
+    const sections = ['story', 'events', 'countdown', 'rsvp', 'gallery'];
+    const navItems = bottomNav?.querySelectorAll('.nav-item') || [];
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const id = entry.target.id;
+            navItems.forEach(item => {
+                const match = item.getAttribute('data-section') === id ||
+                    (id === 'countdown' && item.getAttribute('data-section') === 'rsvp');
+                item.classList.toggle('active', match);
+            });
+        });
+    }, { threshold: 0.35, rootMargin: '-20% 0px -55% 0px' });
+
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) sectionObserver.observe(el);
+    });
+}
+
+/* ----- RSVP WhatsApp ----- */
+function initRSVP() {
+    rsvpForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const attending = document.getElementById('rsvpAttending')?.value;
+        const guests = document.getElementById('rsvpGuests')?.value || '1';
+        const note = document.getElementById('rsvpNote')?.value?.trim() || '';
+
+        if (!attending) {
+            showToast('Lütfen katılım durumunuzu seçin.');
+            return;
+        }
+
+        const answer = attending === 'yes' ? 'Evet, katılacağım' : 'Maalesef katılamayacağım';
+        const msg = [
+            `Merhaba, ${CONFIG.bride} & ${CONFIG.groom} düğün davetiyesi için yanıtım:`,
+            ``,
+            `Tarih: ${CONFIG.eventDateDisplay} — ${CONFIG.eventTimeDisplay}`,
+            `Katılım: ${answer}`,
+            attending === 'yes' ? `Kişi sayısı: ${guests}` : '',
+            note ? `Not: ${note}` : ''
+        ].filter(Boolean).join('\n');
+
+        const url = `https://wa.me/${CONFIG.rsvpWhatsapp}?text=${encodeURIComponent(msg)}`;
+        window.open(url, '_blank');
+
+        if (attending === 'yes') spawnHearts(20);
+        showToast('WhatsApp açılıyor…');
+    });
+}
+
+function showToast(text) {
+    if (!toast) return;
+    toast.textContent = text;
+    toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+/* ----- Gallery expand ----- */
+function initGallery() {
+    document.getElementById('galleryExpand')?.addEventListener('click', () => {
+        const track = document.getElementById('galleryTrack');
+        track?.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
+    });
+}
+
+/* ----- Image fallbacks ----- */
+function initImageFallbacks() {
+    document.querySelectorAll('img').forEach(img => {
+        img.addEventListener('error', () => {
+            img.classList.add('photo-missing');
+            img.alt = '';
+        }, { once: true });
+    });
+}
+
+/* ----- Heart rain (beyaz kalpler) ----- */
 function spawnHearts(count = 12) {
     let container = document.querySelector('.heart-rain');
     if (!container) {
         container = document.createElement('div');
         container.className = 'heart-rain';
+        container.style.cssText = 'position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:90;';
         document.body.appendChild(container);
     }
+
     for (let i = 0; i < count; i++) {
         const h = document.createElement('span');
-        h.className = 'heart';
-        h.textContent = ['♥','❤','♡'][i % 3];
-        h.style.left = Math.random() * 100 + 'vw';
-        const dur = 3 + Math.random() * 3;
-        h.style.animationDuration = dur + 's';
-        h.style.animationDelay = (Math.random() * 0.6) + 's';
-        h.style.fontSize = (14 + Math.random() * 18) + 'px';
-        h.style.color = '#ffffff';
-        h.style.textShadow = '0 1px 3px rgba(93,64,55,0.35), 0 0 10px rgba(255,255,255,0.55)';
+        h.textContent = ['♥', '❤', '♡'][i % 3];
+        h.style.cssText = `
+            position:absolute;top:-10vh;left:${Math.random() * 100}vw;
+            font-size:${14 + Math.random() * 18}px;color:#ffffff;
+            text-shadow:0 1px 3px rgba(93,64,55,0.35),0 0 10px rgba(255,255,255,0.55);
+            animation:heartFall ${3 + Math.random() * 3}s linear forwards;
+            animation-delay:${Math.random() * 0.6}s;opacity:0.85;
+        `;
         container.appendChild(h);
-        setTimeout(() => h.remove(), (dur + 1) * 1000);
+        setTimeout(() => h.remove(), 7000);
+    }
+
+    if (!document.getElementById('heart-fall-style')) {
+        const s = document.createElement('style');
+        s.id = 'heart-fall-style';
+        s.textContent = `@keyframes heartFall{
+            0%{transform:translateY(0) rotate(0);opacity:0}
+            10%{opacity:1}
+            100%{transform:translateY(110vh) rotate(360deg);opacity:0.9}
+        }`;
+        document.head.appendChild(s);
     }
 }
 
-/* ----- 10) Başlık dinamik (config) ----- */
-document.title = `${CONFIG.bride} & ${CONFIG.groom} — Nişan Davetiyesi`;
+/* ----- Particle systems ----- */
+function initSplashParticles() {
+    const canvas = document.getElementById('splash-canvas');
+    if (!canvas) return;
+    runParticles(canvas, 40);
+}
+
+function initMainParticles() {
+    const canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    runParticles(canvas, 30);
+}
+
+function runParticles(canvas, count) {
+    const ctx = canvas.getContext('2d');
+    const heartPath = new Path2D('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+    const particles = [];
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+        constructor() { this.reset(true); }
+        reset(initial) {
+            this.x = Math.random() * canvas.width;
+            this.y = initial ? Math.random() * canvas.height : canvas.height + 50;
+            this.type = Math.random() > 0.88 ? 'heart' : 'dust';
+            if (this.type === 'heart') {
+                this.size = Math.random() * 10 + 5;
+                this.speedY = Math.random() * 1 + 0.5;
+            } else {
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedY = Math.random() * 0.5 + 0.1;
+            }
+            this.speedX = (Math.random() - 0.5) * 0.3;
+            this.opacity = Math.random() * 0.5 + 0.1;
+        }
+        update() {
+            this.y -= this.speedY;
+            this.x += Math.sin(this.y * 0.01) + this.speedX;
+            if (this.y < -50) this.reset(false);
+        }
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.opacity;
+            if (this.type === 'dust') {
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.size / 24, this.size / 24);
+                ctx.fillStyle = 'rgba(255,255,255,0.75)';
+                ctx.fill(heartPath);
+            }
+            ctx.restore();
+        }
+    }
+
+    for (let i = 0; i < count; i++) particles.push(new Particle());
+
+    (function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    })();
+}
